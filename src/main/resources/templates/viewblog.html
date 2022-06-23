@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Blogpost</title>
+    <link rel="stylesheet" th:href="@{/css/viewblog.css}">
+</head>
+
+<body>
+<div class="top">
+    <div class="header">
+        <h3>My Blog Application</h3>
+        <input type="submit" id="Login" value="Login">
+    </div>
+    <h1 th:text="${post.title}"></h1>
+    <p th:text="${post.createdAt}"></p>
+    <p th:text="${post.content}"></p>
+</div>
+</body>
+</html>
