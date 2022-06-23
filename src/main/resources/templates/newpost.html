@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" th:href="@{/css/newpost.css}" />
+</head>
+<body>
+    <div id = "head">
+        <h1>New/Edit Post</h1>
+        <div id = "middle">
+            <form th:action="@{/savePost}" th:object="${posts}" method="post">
+                <input type="text" name="title" th:value="${posts.title}" required placeholder="#Title" >
+                <input type= "text" name="name" placeholder="#Tags" required th:value="${tags.name}">
+                <textarea name="content" th:field="*{content}" required placeholder="Write your blog here"> </textarea><br>
+                <button type="submit">Publish</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
