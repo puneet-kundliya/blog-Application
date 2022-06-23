@@ -1,0 +1,27 @@
+.top{
+    font-size: 1.5rem;
+    border: 2px Solid gray;
+    margin: 5rem 10rem;
+    height: 40rem;
+}
+
+h1{
+    text-align: center;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem;
+}
+input{
+    width: 10%;
+    height: 2rem;
+    font-size: 1.25rem;
+}
+p{
+    text-align: center;
+    margin: 2rem 2rem;
+    font-size: 1.25rem;
+}
