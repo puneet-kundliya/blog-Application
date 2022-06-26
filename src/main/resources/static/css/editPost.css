@@ -1,0 +1,45 @@
+h1{
+    text-align: center;
+    font-size: 3rem;
+}
+#middle{
+    display: block;
+
+}
+#head{
+    display: block;
+    border: 2px solid rgb(0, 0, 0);
+    margin : 2rem 4rem;
+}
+form{
+    text-align: center;
+}
+input{
+    font-size: 1.5rem;
+    border: 0.12rem solid black;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0.5rem;
+    width: 70%;
+    border-radius: 0.2rem;
+    height: 2rem;
+}
+textarea{
+    font-size: 1.5rem;
+    border: 0.12rem solid black;
+    margin-top: 1.6rem;
+    margin-bottom: 1.6rem;
+    padding: 0.5rem 0.5rem;
+    width: 70%;
+    resize: none;
+    height: 28rem;
+    border-radius: 0.2rem;
+    overflow : auto;
+}
+button{
+    padding: 0.5rem 1rem;
+    width: 10rem;
+    border:  2px solid black;
+    border-radius: 0.2rem;
+    margin-bottom: 2rem;
+}
