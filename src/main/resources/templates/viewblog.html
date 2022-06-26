@@ -17,6 +17,32 @@
     <h1 th:text="${post.title}"></h1>
     <p th:text="${post.createdAt}"></p>
     <p th:text="${post.content}"></p>
+
+    <a th:href="@{/post/edit/{id}(id=${post.id})}"><button type="submit"> Edit</button></a>
+</div>
+
+<div class="comment">
+
+    <div class="insidecomment">
+        <h3>Add a Comment</h3>
+        <form  th:action="@{/saveComment{id}(id=${post.id})}" th:object="${comment}" method="POST">
+            <input type="text"  placeholder="Name"  required name="name" th:field="${comment.name}"><br>
+            <input type="email"  placeholder="email" required name="email" th:field="${comment.email}"><br>
+            <textarea name="comment" id="" cols="5" rows="5" placeholder="Write your Comment" required th:field="*{comment}"></textarea>
+            <button type="submit" class="button"> Submit </button>
+        </form>
+    </div>
+    <div class="viewcomment">
+        <h4>Comment List</h4>
+        <div  th:each="comment : ${commentsList}">
+            <form method="get" class="divtag" >
+                <p class="pcomment" th:text="${comment.comment}"></p>
+
+                <button type="submit" th:formaction="@{'/post'+${post.id}+'/viewEditComment'+${comment.id}}">Edit</button>
+                <button type="submit" th:formaction="@{'/post'+${post.id}+'/deleteComment'+${comment.id}}">Delete</button>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -15,6 +15,7 @@ form{
     text-align: center;
 }
 input{
+    font-size: 1.5rem;
     border: 0.12rem solid black;
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -24,6 +25,7 @@ input{
     height: 2rem;
 }
 textarea{
+    font-size: 1.5rem;
     border: 0.12rem solid black;
     margin-top: 1.6rem;
     margin-bottom: 1.6rem;
@@ -32,6 +34,7 @@ textarea{
     resize: none;
     height: 28rem;
     border-radius: 0.2rem;
+    overflow : auto;
 }
 button{
     padding: 0.5rem 1rem;

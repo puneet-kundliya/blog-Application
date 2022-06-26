@@ -1,27 +1,98 @@
 .top{
     font-size: 1.5rem;
     border: 2px Solid gray;
-    margin: 5rem 10rem;
-    height: 40rem;
+    margin: 2rem 7rem;
+    height: auto;
+    margin-bottom: 1rem;
 }
-
+body{
+    text-align:center;
+}
 h1{
     text-align: center;
 }
-
 .header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 2rem;
+    margin: 1rem;
 }
 input{
-    width: 10%;
+    width: 80%;
     height: 2rem;
-    font-size: 1.25rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+#Login{
+    width: 15%;
 }
 p{
     text-align: center;
     margin: 2rem 2rem;
-    font-size: 1.25rem;
+    font-size: 1.75rem;
+}
+button{
+    border: 1px solid black;
+    font-size: 0.75rem;
+    padding: 0.3rem 3rem;
+    margin-top: 1rem;
+    width : 10%;
+    margin-bottom: 1rem;
+    height: 2rem;
+    margin-right: 1rem;
+    column-gap: 3rem;
+    border-radius: 0.2rem;
+}
+.button{
+    width : 20%;
+}
+.comment{
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 1.5rem;
+    text-align: left;
+    border: 2px Solid gray;
+    margin: 2rem 7rem;
+    height: auto;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.insidecomment{
+    margin: 1rem 1rem;
+    width: 30%;
+}
+
+.viewcomment{
+    /* border: 2px solid black; */
+    margin: 1rem 1rem;
+    width: 60%;
+}
+textarea{
+    resize: none;
+    width: 100%;
+    height: 5rem;
+    margin-top: 1rem;
+}
+h3{
+    margin: 1rem 6rem;
+}
+.divtag{
+    margin: 0.5rem 0.5rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center ;
+    border: 2px solid silver;
+}
+h4{
+    margin-top: 1rem;
+    margin-left: 1rem;
+}
+.pcomment{
+    width: 90%;
+    font-size: 1rem;
+    margin: 0%;
+    text-align: left;
+    margin-left: 1rem;
 }
