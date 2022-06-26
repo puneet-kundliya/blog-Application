@@ -1,12 +1,9 @@
 package com.blogpost.project.service;
 
 import com.blogpost.project.model.Comments;
-import com.blogpost.project.model.Posts;
 import com.blogpost.project.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -36,24 +33,6 @@ public class CommentServiceImpl implements CommentService{
         }
         return null;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void updateComments(Comments comment, Comments oldComment) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
