@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogpost Home(Draft)</title>
+    <link rel="stylesheet" th:href="@{/css/allblog.css}" />
+</head>
+<body>
+<div id="header">
+    <h1> My Blog Application(Drafts)</h1>
+    <div id = "feature">
+        <input type="search" name="search">
+        <select name="filter">
+            <option value="Filter">Filter</option>
+        </select>
+        <select name="sort">
+            <option value="sort">sort</option>
+        </select>
+        <input type="submit" id="Login" value="Login">
+    </div>
+</div>
+
+<div id = "body">
+    <div class = "content" th:each="posts: ${postList}">
+        <a th:href="@{/post{id}(id = ${posts.id})}" class="anchor"  th:if="${posts.isPublished == false}">
+            <div class = "spacer">
+                <header><strong th:text="${posts.title}"></strong></header>
+                <p th:text="${posts.createdAt}" class="ptag"> </p>
+                <p th:text="${posts.excerpt}"></p>
+            </div>
+        </a>
+    </div>
+</div>
+</body>
+</html>
