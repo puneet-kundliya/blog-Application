@@ -1,7 +1,9 @@
 package com.blogpost.project.controller;
 
+import com.blogpost.project.model.Comments;
 import com.blogpost.project.model.Posts;
 import com.blogpost.project.model.Tags;
+import com.blogpost.project.service.CommentService;
 import com.blogpost.project.service.PostService;
 import com.blogpost.project.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,35 +31,53 @@ public class PostController {
         model.addAttribute("tags", tags);
         return "newpost";
     }
-
     @PostMapping("/savePost")
     public String savePost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag){
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        post.setExcerpt(post.getContent().substring(0,100)+ "...");
-        post.setCreatedAt(timestamp);
-        post.setPublishedAt(timestamp);
-        tag.setCreatedAt(timestamp);
-        postService.savePost(post);
-        tagService.saveTag(tag);
-        return "redirect:/newpost";
+        post.setPublished(true);
+        postService.savePost(post,tag);
+        return "redirect:/";
     }
 
+    @PostMapping("/draftPost")
+    public String draftPost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag){
+        post.setPublished(false);
+        postService.savePost(post,tag);
+        return "redirect:/";
+    }
     @GetMapping("/")
     public String homePage(Model model){
         List<Posts> listPost = postService.getPost();
         model.addAttribute("postList" , listPost);
         return "allblog";
     }
-    @GetMapping("/post/{id}")
-    public String viewPost(@PathVariable("id") int postId, Model model){
+    @GetMapping("/post{id}")
+    public String viewPost(@PathVariable("id") int postId, Model model, @ModelAttribute("comment") Comments comments) {
         Optional<Posts> post = postService.getPostById(postId);
-        Posts postById = null;
-
-        if(post.isPresent()){
-            postById = post.get();
-        }
-
+        Posts postById = post.get();
+        List<Comments> commentsList = postById.getComments();
         model.addAttribute("post", postById);
+        model.addAttribute("commentsList", commentsList);
         return "viewblog";
+    }
+
+    @PostMapping("/updatePost{id}")
+    public String updatePost(@PathVariable("id")Integer postId,@ModelAttribute("posts")Posts posts){
+        posts.setPublished(true);
+        Optional<Posts> postById = postService.getPostById(postId);
+        Posts postToUpdate = postById.get();
+        List<Comments> oldComments = postToUpdate.getComments();
+        posts.getComments().addAll(oldComments);
+        posts.setCreatedAt(postToUpdate.getCreatedAt());
+        postService.updatePost(posts);
+        return "redirect:/";
+    }
+    @GetMapping("/post/edit/{id}")
+    public String editPost(@PathVariable("id") int postId, Model model) {
+        Optional<Posts> postsOptional = postService.getPostById(postId);
+        Posts postById = postsOptional.get();
+        Tags tag = new Tags();
+        model.addAttribute(postById);
+        model.addAttribute(tag);
+        return "editPost";
     }
 }
