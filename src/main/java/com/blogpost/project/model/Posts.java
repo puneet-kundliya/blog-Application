@@ -2,6 +2,8 @@ package com.blogpost.project.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -26,6 +28,17 @@ public class Posts {
     private Timestamp createdAt;
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name= "tag_id"))
+    private List<Tags> tags = new ArrayList<>();
+
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id",referencedColumnName = "id")
+    private List<Comments> comments = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -97,5 +110,18 @@ public class Posts {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Tags> getTags() {
+        return tags;
+    }
+    public void setTags(List<Tags> tags) {
+        this.tags = tags;
+    }
+    public List<Comments> getComments() {
+        return comments;
+    }
+    public void setComments(List<Comments> comments) {
+        this.comments = comments;
     }
 }
