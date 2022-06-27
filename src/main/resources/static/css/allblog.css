@@ -13,7 +13,7 @@ h1{
     display: flex;
     justify-content: space-evenly;
     margin: 1rem;
-    width: 30%;
+    width: 40%;
 }
 input,select{
     width: 8rem;
@@ -54,4 +54,10 @@ header{
 }
 .ptag{
     font-size : 1rem;
+}
+button{
+    margin-right : 3rem;
+    width: 6rem;
+    height: 2rem;
+    font-size: 1rem;
 }
