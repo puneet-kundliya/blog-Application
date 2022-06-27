@@ -3,14 +3,15 @@ package com.blogpost.project.controller;
 import com.blogpost.project.model.Comments;
 import com.blogpost.project.model.Posts;
 import com.blogpost.project.model.Tags;
-import com.blogpost.project.service.CommentService;
 import com.blogpost.project.service.PostService;
 import com.blogpost.project.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,11 @@ public class PostController {
         postService.savePost(post,tag);
         return "redirect:/";
     }
+    @PostMapping("/updatePost{id}")
+    public String updatePost(@PathVariable("id")Integer postId,@ModelAttribute("posts")Posts posts,@ModelAttribute("tag")Tags tag){
+        postService.updatePost(posts, tag);
+        return "redirect:/";
+    }
 
     @PostMapping("/draftPost")
     public String draftPost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag){
@@ -44,9 +50,9 @@ public class PostController {
     }
     @GetMapping("/")
     public String homePage(Model model){
-        List<Posts> listPost = postService.getPost();
-        model.addAttribute("postList" , listPost);
-        return "allblog";
+//        List<Posts> listPost = postService.getPost();
+//        model.addAttribute("postList" , listPost);
+        return findPaginated(1,model);
     }
     @GetMapping("/post{id}")
     public String viewPost(@PathVariable("id") int postId, Model model, @ModelAttribute("comment") Comments comments) {
@@ -55,36 +61,45 @@ public class PostController {
         List<Comments> commentsList = postById.getComments();
         model.addAttribute("post", postById);
         model.addAttribute("commentsList", commentsList);
+
         return "viewblog";
     }
 
-    @PostMapping("/updatePost{id}")
-    public String updatePost(@PathVariable("id")Integer postId,@ModelAttribute("posts")Posts posts){
-        posts.setPublished(true);
-        Optional<Posts> postById = postService.getPostById(postId);
-        Posts postToUpdate = postById.get();
-        List<Comments> oldComments = postToUpdate.getComments();
-        posts.getComments().addAll(oldComments);
-        posts.setCreatedAt(postToUpdate.getCreatedAt());
-        postService.updatePost(posts);
-        return "redirect:/";
-    }
     @GetMapping("/post/edit/{id}")
     public String editPost(@PathVariable("id") int postId, Model model) {
         Optional<Posts> postsOptional = postService.getPostById(postId);
         Posts postById = postsOptional.get();
         Tags tag = new Tags();
-        model.addAttribute(postById);
-        model.addAttribute(tag);
+        List<Tags> tagsList = postById.getTags();
+        String allTags = "";
+        for (Tags eachTag : tagsList) {
+            String name = eachTag.getName() + ",";
+            allTags += name;
+        }
+        System.out.println(allTags);
+        tag.setName(allTags);
+        model.addAttribute("post",postById);
+        model.addAttribute("tag",tag);
         return "editPost";
     }
 
     @GetMapping("/searchKeyword")
     public String getByKeyword(@RequestParam("keyword") String keyword, Model model){
-        System.out.println(keyword);
-        List<Posts> postByKeyword = postService.getPostByKeyword(keyword);
-        System.out.println(postByKeyword.get(0).getContent());
+        List<Posts> postByKeyword = postService.getPostByKeyword(keyword.toLowerCase());
         model.addAttribute("postList",postByKeyword);
+        List<Posts> posts = new ArrayList<>();
         return  "allblog";
+    }
+
+    @GetMapping("/page/{pageNo}")
+    public String findPaginated(@PathVariable("pageNo") Integer pageNo, Model model){
+        Integer pageSize = 10;
+        Page<Posts> page = postService.findPaginated(pageNo,pageSize);
+        List<Posts> listPost = page.getContent();
+        model.addAttribute("currentPage",pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("postList", listPost);
+        return "allblog";
     }
 }
