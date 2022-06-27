@@ -69,6 +69,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Posts> getPostByKeyword(String keyword) {
+        List<Posts> posts = postRepository.findPostBySearch(keyword);
+//        System.out.println(posts.get(0).getContent());
+        return posts;
+    }
+
+    @Override
     public void savePostComments(Posts posts) {
         postRepository.save(posts);
     }
