@@ -16,4 +16,6 @@ public interface PostService {
     void updatePost(Posts posts);
 
     void getCommentById(Integer id);
+
+    List<Posts> getPostByKeyword(String keyword);
 }
