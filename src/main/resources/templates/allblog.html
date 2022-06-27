@@ -38,5 +38,29 @@
         </a>
     </div>
 </div>
+
+<div th:if="${totalPages > 1}">
+
+    <div>
+        <div class="pageNo">
+            <span th:each="i:${#numbers.sequence(1 , totalPages)}">
+                <a th:if="${currentPage != i}" th:href="@{'/page/'+${i}}"> [[${i}]]</a>
+                <span th:unless="${currentPage != i}"> [[${i}]]</span>
+            </span>
+        </div>
+
+        <div class="last">
+            <div class="previous">
+                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1}}">Previous</a>
+                <span th:unless="${currentPage > 1}">Previous</span>
+            </div>
+
+            <div class="next">
+                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
+                <span th:unless="${currentPage < totalPages}">Next</span>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html> 

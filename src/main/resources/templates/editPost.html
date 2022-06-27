@@ -11,9 +11,9 @@
 <div id = "head">
   <h1>Edit Post</h1>
   <div id = "middle">
-    <form th:action="@{/updatePost{id}(id=${posts.id})}" th:object="${posts}" method="post">
-      <input type="text" name="title" th:field="${posts.title}" required placeholder="#Title" >
-      <input type= "text" name="name" placeholder="#Tags" th:field="${tags.name}">
+    <form th:action="@{/updatePost{id}(id=${post.id})}" th:object="${post}" method="post">
+      <input type="text" name="title" th:field="${post.title}" required placeholder="#Title" >
+      <input type= "text" name="name" placeholder="#Tags" th:field="${tag.name}" REQUIRED>
       <textarea name="content" th:field="*{content}" required placeholder="Write your blog here"> </textarea><br>
       <button type="submit">Publish</button>
       <button type="submit" th:formaction = "@{/draftPost}">Save</button>
