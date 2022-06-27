@@ -6,6 +6,9 @@ import com.blogpost.project.model.Tags;
 import com.blogpost.project.repository.PostRepository;
 import com.blogpost.project.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.List;
@@ -50,7 +53,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(Posts posts) {
+    public void updatePost(Posts posts, Tags tag) {
+        posts.setPublished(true);
+        Optional<Posts> postById = getPostById(posts.getId());
+        Posts postToUpdate = postById.get();
+        List<Comments> oldComments = postToUpdate.getComments();
+        posts.getComments().addAll(oldComments);
+        posts.setCreatedAt(postToUpdate.getCreatedAt());
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         posts.setPublishedAt(timestamp);
         posts.setAuthor("Puneet");
@@ -60,6 +69,24 @@ public class PostServiceImpl implements PostService {
         else{
             posts.setExcerpt(posts.getContent().substring(0,100)+ "....");
         }
+
+        String tagName = tag.getName();
+        String[] array = tagName.split(",");
+        for (String name : array){
+            tag.getPosts().add(posts);
+            Tags tagsDb = tagRepository.getTagByName(name);
+            if(tagsDb == null){
+                Tags newTag = new Tags();
+                newTag.setName(name);
+                newTag.setCreatedAt(timestamp);
+                posts.getTags().add(newTag);
+                tagRepository.save(newTag);
+            }
+            else{
+                posts.getTags().add(tagsDb);
+            }
+        }
+
         postRepository.save(posts);
     }
 
@@ -71,7 +98,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Posts> getPostByKeyword(String keyword) {
         List<Posts> posts = postRepository.findPostBySearch(keyword);
-//        System.out.println(posts.get(0).getContent());
         return posts;
     }
 
@@ -92,5 +118,12 @@ public class PostServiceImpl implements PostService {
        else{
            throw new RuntimeException("Post is not present");
        }
+    }
+
+    @Override
+    public Page<Posts> findPaginated(Integer pageNo, Integer pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo-1,pageSize);
+        return this.postRepository.findAll(pageable);
     }
 }
