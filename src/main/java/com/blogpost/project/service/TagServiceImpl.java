@@ -12,7 +12,6 @@ import java.util.Optional;
 public class TagServiceImpl implements TagService {
     @Autowired
     private TagRepository tagRepository;
-
     @Override
     public Optional<Tags> getTagById(Integer tagId) throws Exception {
         Optional<Tags> tags = tagRepository.findById(tagId);

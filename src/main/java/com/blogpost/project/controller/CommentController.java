@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 @Controller
@@ -29,22 +28,18 @@ public class CommentController {
         postService.savePostComments(posts);
         return "redirect:/post{id}";
     }
-
     @GetMapping("/post{postId}/deleteComment{commentId}")
     public String deleteComments(@PathVariable("postId") Integer postId, @PathVariable("commentId")Integer commentId){
         Comments comments = commentService.getCommentById(commentId);
         commentService.deleteComment(comments);
         return "redirect:/post{postId}";
     }
-
     @GetMapping("/post{postId}/viewEditComment{commentId}")
     public String viewEditComment(@PathVariable("postId") Integer postId, @PathVariable("commentId") Integer commentId, Model model){
         Comments comments = commentService.getCommentById(commentId);
         model.addAttribute("comments", comments);
         return "editComment";
     }
-
-
     @PostMapping("/post{postId}/editComment{commentId}")
     public String editComment(@PathVariable("commentId")Integer commentId,@ModelAttribute("comments") Comments comments){
         Comments oldComments = commentService.getCommentById(commentId);
@@ -53,6 +48,4 @@ public class CommentController {
         commentService.updateComments(comments,oldComments);
         return "redirect:/post{postId}";
     }
-
-
 }

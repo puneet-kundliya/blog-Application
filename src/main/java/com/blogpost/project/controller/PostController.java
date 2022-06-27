@@ -10,8 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +39,6 @@ public class PostController {
         postService.updatePost(posts, tag);
         return "redirect:/";
     }
-
     @PostMapping("/draftPost")
     public String draftPost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag){
         post.setPublished(false);
@@ -52,7 +49,7 @@ public class PostController {
     public String homePage(Model model){
 //        List<Posts> listPost = postService.getPost();
 //        model.addAttribute("postList" , listPost);
-        return findPaginated(1,model);
+        return findPaginated(1,model, "");
     }
     @GetMapping("/post{id}")
     public String viewPost(@PathVariable("id") int postId, Model model, @ModelAttribute("comment") Comments comments) {
@@ -64,7 +61,6 @@ public class PostController {
 
         return "viewblog";
     }
-
     @GetMapping("/post/edit/{id}")
     public String editPost(@PathVariable("id") int postId, Model model) {
         Optional<Posts> postsOptional = postService.getPostById(postId);
@@ -82,24 +78,25 @@ public class PostController {
         model.addAttribute("tag",tag);
         return "editPost";
     }
-
     @GetMapping("/searchKeyword")
     public String getByKeyword(@RequestParam("keyword") String keyword, Model model){
-        List<Posts> postByKeyword = postService.getPostByKeyword(keyword.toLowerCase());
-        model.addAttribute("postList",postByKeyword);
-        List<Posts> posts = new ArrayList<>();
-        return  "allblog";
+//        List<Posts> postByKeyword = postService.getPostByKeyword(keyword.toLowerCase());
+//        model.addAttribute("postList",postByKeyword);
+//        List<Posts> posts = new ArrayList<>();
+//        return  "allblog";
+        keyword = keyword.toLowerCase();
+        return findPaginated(1,model,keyword);
     }
-
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable("pageNo") Integer pageNo, Model model){
+    public String findPaginated(@PathVariable("pageNo") Integer pageNo, Model model,String search){
         Integer pageSize = 10;
-        Page<Posts> page = postService.findPaginated(pageNo,pageSize);
+        Page<Posts> page = postService.findPaginated(pageNo,pageSize,search);
         List<Posts> listPost = page.getContent();
         model.addAttribute("currentPage",pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("postList", listPost);
+        model.addAttribute("search", search);
         return "allblog";
     }
 }

@@ -91,17 +91,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void getCommentById(Integer id) {
-
-    }
-
-    @Override
-    public List<Posts> getPostByKeyword(String keyword) {
-        List<Posts> posts = postRepository.findPostBySearch(keyword);
-        return posts;
-    }
-
-    @Override
     public void savePostComments(Posts posts) {
         postRepository.save(posts);
     }
@@ -121,9 +110,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Posts> findPaginated(Integer pageNo, Integer pageSize) {
+    public Page<Posts> findPaginated(Integer pageNo, Integer pageSize, String keyword) {
 
         Pageable pageable = PageRequest.of(pageNo-1,pageSize);
-        return this.postRepository.findAll(pageable);
+//        return this.postRepository.findAll(pageable);
+        return this.postRepository.findBySearch(keyword, pageable);
     }
 }

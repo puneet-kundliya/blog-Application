@@ -22,7 +22,6 @@ public class Tags {
             joinColumns = @JoinColumn(name = "tag_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id"))
     private List<Posts> posts=new ArrayList<>();
-
     public int getId() {
         return id;
     }

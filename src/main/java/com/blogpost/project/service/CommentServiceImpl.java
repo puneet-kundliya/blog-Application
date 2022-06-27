@@ -9,21 +9,17 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService{
-
     @Autowired
     private CommentRepository commentRepository;
-
     @Override
     public void saveComment(Comments comments) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         comments.setCreatedAt(timestamp);
     }
-
     @Override
     public void deleteComment(Comments comment) {
         commentRepository.delete(comment);
     }
-
     public Comments getCommentById(Integer commentId){
         List<Comments> listComment = commentRepository.findAll();
         for (Comments comment: listComment) {
@@ -33,7 +29,6 @@ public class CommentServiceImpl implements CommentService{
         }
         return null;
     }
-
     public void updateComments(Comments comment, Comments oldComment) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         oldComment.setComment(comment.getComment());

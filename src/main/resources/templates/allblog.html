@@ -11,7 +11,6 @@
 <div id="header">
     <h1> My Blog Application</h1>
     <div id = "feature">
-
         <form th:action="@{/searchKeyword}"  method = "get">
         <input type="text" name="keyword" th:value="${keyword}" placeholder = "Search" />
         <button type="submit" >Search</button>
@@ -26,7 +25,6 @@
         <input type="submit" id="Login" value="Login">
     </div>
 </div>
-
 <div id = "body">
     <div class = "content" th:each="posts: ${postList}" th:if="${posts.getPublished == true}">
         <a th:href="@{/post{id}(id = ${posts.id})}" class="anchor" >
@@ -38,25 +36,22 @@
         </a>
     </div>
 </div>
-
 <div th:if="${totalPages > 1}">
 
     <div>
         <div class="pageNo">
             <span th:each="i:${#numbers.sequence(1 , totalPages)}">
-                <a th:if="${currentPage != i}" th:href="@{'/page/'+${i}}"> [[${i}]]</a>
+                <a th:if="${currentPage != i}" th:href="@{'/page/'+${i}+ '?search=' + ${search}}"> [[${i}]]</a>
                 <span th:unless="${currentPage != i}"> [[${i}]]</span>
             </span>
         </div>
-
         <div class="last">
             <div class="previous">
-                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1}}">Previous</a>
+                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1} + '?search=' + ${search}}">Previous</a>
                 <span th:unless="${currentPage > 1}">Previous</span>
             </div>
-
             <div class="next">
-                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1}}">Next</a>
+                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1} + '?search=' + ${search}}">Next</a>
                 <span th:unless="${currentPage < totalPages}">Next</span>
             </div>
         </div>

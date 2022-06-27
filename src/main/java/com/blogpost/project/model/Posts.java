@@ -35,7 +35,6 @@ public class Posts {
             inverseJoinColumns = @JoinColumn(name= "tag_id"))
     private List<Tags> tags = new ArrayList<>();
 
-
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id",referencedColumnName = "id")
     private List<Comments> comments = new ArrayList<>();
