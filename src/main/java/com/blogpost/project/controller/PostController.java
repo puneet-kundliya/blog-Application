@@ -9,10 +9,8 @@ import com.blogpost.project.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -79,5 +77,14 @@ public class PostController {
         model.addAttribute(postById);
         model.addAttribute(tag);
         return "editPost";
+    }
+
+    @GetMapping("/searchKeyword")
+    public String getByKeyword(@RequestParam("keyword") String keyword, Model model){
+        System.out.println(keyword);
+        List<Posts> postByKeyword = postService.getPostByKeyword(keyword);
+        System.out.println(postByKeyword.get(0).getContent());
+        model.addAttribute("postList",postByKeyword);
+        return  "allblog";
     }
 }
