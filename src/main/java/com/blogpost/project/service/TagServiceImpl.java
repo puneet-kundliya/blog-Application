@@ -1,11 +1,11 @@
 package com.blogpost.project.service;
 
-import com.blogpost.project.model.Posts;
 import com.blogpost.project.model.Tags;
 import com.blogpost.project.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.sql.Timestamp;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,5 +21,10 @@ public class TagServiceImpl implements TagService {
         else{
             throw new Exception();
         }
+    }
+
+    public List<Tags> getAllTag(){
+        List<Tags> tagsList = tagRepository.findAll();
+        return tagsList;
     }
 }
