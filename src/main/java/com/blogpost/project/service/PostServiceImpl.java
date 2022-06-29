@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.List;
@@ -86,7 +87,6 @@ public class PostServiceImpl implements PostService {
                 posts.getTags().add(tagsDb);
             }
         }
-
         postRepository.save(posts);
     }
 
@@ -110,10 +110,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Posts> findPaginated(Integer pageNo, Integer pageSize, String keyword) {
+    public Page<Posts> findPaginated(Integer pageNo, Integer pageSize, String keyword,  String sortField, String sortDirection) {
 
-        Pageable pageable = PageRequest.of(pageNo-1,pageSize);
-//        return this.postRepository.findAll(pageable);
+        Sort sort;
+        if(sortDirection.equalsIgnoreCase("ASC")){
+            sort = Sort.by(Sort.Direction.ASC,"published_at");
+        }
+        else{
+            sort = Sort.by(Sort.Direction.DESC, "published_at");
+        }
+        Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
         return this.postRepository.findBySearch(keyword, pageable);
     }
 }

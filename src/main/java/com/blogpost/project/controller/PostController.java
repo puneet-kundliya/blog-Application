@@ -49,7 +49,7 @@ public class PostController {
     public String homePage(Model model){
 //        List<Posts> listPost = postService.getPost();
 //        model.addAttribute("postList" , listPost);
-        return findPaginated(1,model, "");
+        return findPaginated(1,"", "ASC",model ,"");
     }
     @GetMapping("/post{id}")
     public String viewPost(@PathVariable("id") int postId, Model model, @ModelAttribute("comment") Comments comments) {
@@ -79,24 +79,35 @@ public class PostController {
         return "editPost";
     }
     @GetMapping("/searchKeyword")
-    public String getByKeyword(@RequestParam("keyword") String keyword, Model model){
+    public String getByKeyword(@RequestParam("keyword") String keyword,
+                               @RequestParam("sortDir") String sortDir, Model model){
+
 //        List<Posts> postByKeyword = postService.getPostByKeyword(keyword.toLowerCase());
 //        model.addAttribute("postList",postByKeyword);
 //        List<Posts> posts = new ArrayList<>();
 //        return  "allblog";
-        keyword = keyword.toLowerCase();
-        return findPaginated(1,model,keyword);
+        String sortField = "";
+        return findPaginated(1,sortField,sortDir, model, keyword.toLowerCase());
     }
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable("pageNo") Integer pageNo, Model model,String search){
+    public String findPaginated(@PathVariable("pageNo") Integer pageNo,
+                                 @RequestParam("sortField") String sortField,
+                                 @RequestParam("sortDir") String sortDir,
+                                 Model model,String search){
         Integer pageSize = 10;
-        Page<Posts> page = postService.findPaginated(pageNo,pageSize,search);
+        sortField = "published_at";
+        Page<Posts> page = postService.findPaginated(pageNo,pageSize, search, sortField, sortDir);
         List<Posts> listPost = page.getContent();
+
+        List<Tags> tagsList = tagService.getAllTag();
         model.addAttribute("currentPage",pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("postList", listPost);
         model.addAttribute("search", search);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("tagList",tagsList);
         return "allblog";
     }
 }

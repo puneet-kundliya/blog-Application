@@ -16,6 +16,6 @@ public interface PostService {
 
     void updatePost(Posts posts, Tags tags);
 
-    Page<Posts> findPaginated(Integer pageNo, Integer pageSize,String keyword);
+    Page<Posts> findPaginated(Integer pageNo, Integer pageSize, String keyword, String sortDirection, String sortDir);
 
 }
