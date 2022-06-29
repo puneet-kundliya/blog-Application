@@ -12,19 +12,30 @@
     <h1> My Blog Application</h1>
     <div id = "feature">
         <form th:action="@{/searchKeyword}"  method = "get">
-        <input type="text" name="keyword" th:value="${keyword}" placeholder = "Search" />
-        <button type="submit" >Search</button>
+            <input type="text" name="keyword" th:value="${keyword}" placeholder = "Search" />
+            <input type="hidden" name="sortField" th:value="${sortField}">
+            <input type="hidden" name="sortDir" th:value="${sortDir}">
+            <button type="submit" >Search</button>
         </form>
-
-        <select name="filter">
-            <option value="Filter">Filter</option>
-        </select>
-        <select name="sort">
-            <option value="sort">sort</option>
-        </select>
+        <form method="get" th:action="@{/searchKeyword}">
+            <input type="hidden" name="sortField" th:value="${sortField}">
+            <input type="hidden" name="keyword" th:value="${keyword}">
+            <select name="sortDir" >
+                <option>Sort(Date)</option>
+                <option  value="ASC">ASC</option>
+                <option  value="DESC">DESC</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
         <input type="submit" id="Login" value="Login">
+
+        <select name="filter" multiple class="filter">
+            <option value="Filter" th:each="tag: ${tagList}" th:text="${tag.name}"></option>
+        </select>
+
     </div>
 </div>
+
 <div id = "body">
     <div class = "content" th:each="posts: ${postList}" th:if="${posts.getPublished == true}">
         <a th:href="@{/post{id}(id = ${posts.id})}" class="anchor" >
@@ -37,21 +48,20 @@
     </div>
 </div>
 <div th:if="${totalPages > 1}">
-
     <div>
         <div class="pageNo">
             <span th:each="i:${#numbers.sequence(1 , totalPages)}">
-                <a th:if="${currentPage != i}" th:href="@{'/page/'+${i}+ '?search=' + ${search}}"> [[${i}]]</a>
+                <a th:if="${currentPage != i}" th:href="@{'/page/'+${i} + '?search=' + ${search} +'&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}"> [[${i}]]</a>
                 <span th:unless="${currentPage != i}"> [[${i}]]</span>
             </span>
         </div>
         <div class="last">
             <div class="previous">
-                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1} + '?search=' + ${search}}">Previous</a>
+                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1} + '?search=' + ${search} +'&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
                 <span th:unless="${currentPage > 1}">Previous</span>
             </div>
             <div class="next">
-                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1} + '?search=' + ${search}}">Next</a>
+                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1} + '?search=' + ${search} +'&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
                 <span th:unless="${currentPage < totalPages}">Next</span>
             </div>
         </div>
