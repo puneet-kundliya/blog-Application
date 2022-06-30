@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogpost Home</title>
+    <link rel="stylesheet" th:href="@{/css/allblog.css}" />
+</head>
+<body>
+<div id="header">
+    <h1> My Blog Application</h1>
+    <div id = "feature">
+        <form th:action="@{/searchKeyword}"  method = "get">
+            <input type="text" name="search" th:value="${search}" placeholder = "Search" />
+            <!--            <input type="hidden" name="sortField" th:value="${sortField}">-->
+            <input type="hidden" name="sortDir" th:value="${sortDir}">
+            <button type="submit" >Search</button>
+        </form>
+        <form method="get" th:action="@{/filterMethod}">
+            <!--            <input type="hidden" name="sortField" th:value="${sortField}">-->
+            <input type="hidden" name="search" th:value="${search}">
+<!--            <input type="hidden" name="tagId" th:value="${reqParam}">-->
+
+
+            <select id="selectedTag" name="tagId" multiple hidden>
+                <option selected th:each="tagId : ${filterTags}" th:value="${tagId}"></option>
+            </select>
+            <select name="sortDir" >
+                <option>Sort(Date)</option>
+                <option  value="ASC">ASC</option>
+                <option  value="DESC">DESC</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+        <input type="submit" id="Login" value="Login">
+        <form method="get" th:action="@{/filterMethod}">
+            <select name="tagId" multiple class="filter">
+                <option th:each="tag: ${tagList}" th:text="${tag.name}" th:value="${tag.id}"></option>
+            </select><br>
+            <!--            <input type="hidden" name="sortField" th:value="${sortField}">-->
+            <input type="hidden" name="search" th:value="${search}">
+            <input type="hidden" name="sortDir" th:value="${sortDir}">
+            <button type="submit">Filter</button>
+        </form>
+
+    </div>
+</div>
+<div id = "body">
+    <div class = "content" th:each="posts: ${postList}" th:if="${posts.getPublished == true}">
+        <a th:href="@{/post{id}(id = ${posts.id})}" class="anchor" >
+            <div class = "spacer">
+                <header><strong th:text="${posts.title}"></strong></header>
+                <p th:text="${posts.createdAt}" class="ptag"> </p>
+                <p th:text="${posts.excerpt}"></p>
+            </div>
+        </a>
+    </div>
+</div>
+<div th:if="${totalPages > 1}">
+    <div>
+        <div class="pageNo">
+            <span th:each="i:${#numbers.sequence(1 , totalPages)}">
+<!--                +'&sortField=' + ${sortField}-->
+                <a th:if="${currentPage != i}" th:href="@{'/page/'+${i} +'/filter' + '?search=' + ${search}  + '&sortDir=' + ${sortDir} + ${reqParam}}"> [[${i}]]</a>
+                <span th:unless="${currentPage != i}"> [[${i}]]</span>
+            </span>
+        </div>
+        <div class="last">
+            <div class="previous">
+                <!--                +'&sortField=' + ${sortField}-->
+                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1} +'/filter' + '?search=' + ${search}  + '&sortDir=' + ${sortDir}+ ${reqParam}}">Previous</a>
+                <span th:unless="${currentPage > 1}">Previous</span>
+            </div>
+            <div class="next">
+                <!--                +'&sortField=' + ${sortField}-->
+                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1} +'/filter' + '?search=' + ${search} + '&sortDir=' + ${sortDir}+ ${reqParam}}">Next</a>
+                <span th:unless="${currentPage < totalPages}">Next</span>
+            </div>
+        </div>
+    </div>
+    <br><br><br>
+</div>
+</body>
+</html>
