@@ -138,6 +138,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void deletePost(Integer postId) {
+        Posts post = getPostById(postId).get();
+        postRepository.delete(post);
+    }
+
+    @Override
     public List<Posts> getPostByTags(List<Integer> idTags) throws Exception {
         List<Posts> postByTagId = new ArrayList<>();
 

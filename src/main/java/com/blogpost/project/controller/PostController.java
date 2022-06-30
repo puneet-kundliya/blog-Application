@@ -135,4 +135,10 @@ public class PostController {
         model.addAttribute("tagList",tagsList);
         return "allblog";
     }
+
+    @GetMapping("post/delete/{postId}")
+    public String deletePost(@PathVariable("postId") Integer postId){
+        postService.deletePost(postId);
+        return "redirect:/";
+    }
 }

@@ -19,6 +19,7 @@
     <p th:text="${post.content}"></p>
 
     <a th:href="@{/post/edit/{id}(id=${post.id})}"><button type="submit"> Edit</button></a>
+    <a th:href="@{/post/delete/{postId}(postId=${post.id})}"><button type="submit"> Delete</button></a>
 </div>
 <div class="comment">
 

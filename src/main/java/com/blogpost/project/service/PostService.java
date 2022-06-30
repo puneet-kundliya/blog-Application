@@ -20,4 +20,6 @@ public interface PostService {
     List<Posts> getPostByTags(List<Integer> idTags) throws Exception;
 
     Page<Posts> findPaginatedTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDir);
+
+    void deletePost(Integer postId);
 }
