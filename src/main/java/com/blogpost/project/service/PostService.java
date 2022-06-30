@@ -11,11 +11,13 @@ public interface PostService {
 
     void savePostComments(Posts posts);
 
-    List<Posts> getPost();
     Optional<Posts> getPostById(Integer postId);
 
     void updatePost(Posts posts, Tags tags);
 
     Page<Posts> findPaginated(Integer pageNo, Integer pageSize, String keyword, String sortDirection, String sortDir);
 
+    List<Posts> getPostByTags(List<Integer> idTags) throws Exception;
+
+    Page<Posts> findPaginatedTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDir);
 }

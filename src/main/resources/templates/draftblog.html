@@ -21,7 +21,6 @@
         <input type="submit" id="Login" value="Login">
     </div>
 </div>
-
 <div id = "body">
     <div class = "content" th:each="posts: ${postList}">
         <a th:href="@{/post{id}(id = ${posts.id})}" class="anchor"  th:if="${posts.isPublished == false}">

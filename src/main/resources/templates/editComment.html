@@ -13,7 +13,6 @@
     rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/editComment.css}">
 </head>
-
 <body>
   <div class="container">
     <h2 align="center">Update Comment</h2>
@@ -24,7 +23,6 @@
 <!--          <label for="comment-text"></label>-->
           <textarea class="form-control" id="comment-text" rows="5" name="text" th:field="${comments.comment}"></textarea>
         </div>
-
         <div class="form-group" align="center">
           <button type="submit" th:formaction="@{'/post'+${comments.postId}+'/editComment'+${comments.id}}" class="btn">Update</button>
         </div>

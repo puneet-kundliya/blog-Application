@@ -4,7 +4,6 @@ import com.blogpost.project.model.Tags;
 import com.blogpost.project.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +14,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public Optional<Tags> getTagById(Integer tagId) throws Exception {
         Optional<Tags> tags = tagRepository.findById(tagId);
+
         if(tags.isPresent()){
             return tags;
         }
@@ -26,5 +26,15 @@ public class TagServiceImpl implements TagService {
     public List<Tags> getAllTag(){
         List<Tags> tagsList = tagRepository.findAll();
         return tagsList;
+    }
+
+    @Override
+    public String getAllTagName(List<Tags> tagsList) {
+        String allTags = "";
+        for (Tags eachTag : tagsList) {
+            String name = eachTag.getName() + ",";
+            allTags += name;
+        }
+        return allTags;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,11 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    TagService tagService;
+
+
     @Override
     public void savePost(Posts posts,Tags tag) {
         posts.setAuthor("Puneet");
@@ -70,7 +76,6 @@ public class PostServiceImpl implements PostService {
         else{
             posts.setExcerpt(posts.getContent().substring(0,100)+ "....");
         }
-
         String tagName = tag.getName();
         String[] array = tagName.split(",");
         for (String name : array){
@@ -94,11 +99,6 @@ public class PostServiceImpl implements PostService {
     public void savePostComments(Posts posts) {
         postRepository.save(posts);
     }
-
-    @Override
-    public List<Posts> getPost() {
-        return postRepository.findAll();
-    }
     public Optional<Posts> getPostById(Integer postId){
        Optional<Posts> post=  postRepository.findById(postId);
        if(post.isPresent()){
@@ -121,5 +121,34 @@ public class PostServiceImpl implements PostService {
         }
         Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
         return this.postRepository.findBySearch(keyword, pageable);
+    }
+
+    @Override
+    public Page<Posts> findPaginatedTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDirection) {
+
+        Sort sort;
+        if(sortDirection.equalsIgnoreCase("ASC")){
+            sort = Sort.by(Sort.Direction.ASC,"published_at");
+        }
+        else{
+            sort = Sort.by(Sort.Direction.DESC, "published_at");
+        }
+        Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
+        return this.postRepository.findByTags(idTags,pageable);
+    }
+
+    @Override
+    public List<Posts> getPostByTags(List<Integer> idTags) throws Exception {
+        List<Posts> postByTagId = new ArrayList<>();
+
+        for (Integer tagId: idTags ) {
+            Optional<Tags> tag = tagService.getTagById(tagId);
+            for (Posts post: tag.get().getPosts()) {
+                if(!postByTagId.contains(post)){
+                    postByTagId.add(post);
+                }
+            }
+        }
+        return postByTagId;
     }
 }

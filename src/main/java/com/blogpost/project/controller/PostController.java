@@ -47,8 +47,6 @@ public class PostController {
     }
     @GetMapping("/")
     public String homePage(Model model){
-//        List<Posts> listPost = postService.getPost();
-//        model.addAttribute("postList" , listPost);
         return findPaginated(1,"", "ASC",model ,"");
     }
     @GetMapping("/post{id}")
@@ -67,38 +65,65 @@ public class PostController {
         Posts postById = postsOptional.get();
         Tags tag = new Tags();
         List<Tags> tagsList = postById.getTags();
-        String allTags = "";
-        for (Tags eachTag : tagsList) {
-            String name = eachTag.getName() + ",";
-            allTags += name;
-        }
-        System.out.println(allTags);
+        String allTags = tagService.getAllTagName(tagsList);
         tag.setName(allTags);
         model.addAttribute("post",postById);
         model.addAttribute("tag",tag);
         return "editPost";
     }
     @GetMapping("/searchKeyword")
-    public String getByKeyword(@RequestParam("keyword") String keyword,
+    public String getByKeyword(@RequestParam("search") String search,
                                @RequestParam("sortDir") String sortDir, Model model){
-
-//        List<Posts> postByKeyword = postService.getPostByKeyword(keyword.toLowerCase());
-//        model.addAttribute("postList",postByKeyword);
-//        List<Posts> posts = new ArrayList<>();
-//        return  "allblog";
         String sortField = "";
-        return findPaginated(1,sortField,sortDir, model, keyword.toLowerCase());
+        return findPaginated(1,sortField,sortDir, model, search.toLowerCase());
     }
+
+    @GetMapping("/filterMethod")
+    public String filterByTags(@RequestParam("search") String search,
+                               @RequestParam("sortDir") String sortDir,Model model,
+                               @RequestParam("tagId") List<Integer> tagId){
+//        @RequestParam("sortField") String sortField,
+        String sortField = "published_at";
+        System.out.println(tagId);
+        return  findPaginatedByTags(1,sortField,sortDir,model,tagId,search);
+    }
+
+    @GetMapping("/page/{pageNo}/filter")
+    public String findPaginatedByTags(@PathVariable("pageNo") Integer pageNo,
+                                      String sortField,
+                                      @RequestParam("sortDir") String sortDir,
+                                      Model model,@RequestParam("tagId") List<Integer> IdTags, @RequestParam(value = "search",defaultValue = "") String search){
+        Integer pageSize = 4;
+        sortField = "published_at";
+        Page<Posts> page = postService.findPaginatedTags(pageNo,pageSize, IdTags, sortField, sortDir);
+        List<Posts> listPost = page.getContent();
+        String reqParam = "";
+        for (Integer i: IdTags) {
+            reqParam += ("&tagId=" + i);
+        }
+        List<Tags> tagsList = tagService.getAllTag();
+        model.addAttribute("currentPage",pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("postList", listPost);
+//        model.addAttribute("search", search);
+        model.addAttribute("reqParam", reqParam);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("tagList",tagsList);
+        model.addAttribute("filterTags", IdTags);
+        return "allblogfilter";
+    }
+
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable("pageNo") Integer pageNo,
-                                 @RequestParam("sortField") String sortField,
+                                @RequestParam("sortField") String sortField,
                                  @RequestParam("sortDir") String sortDir,
                                  Model model,String search){
-        Integer pageSize = 10;
+        Integer pageSize = 4;
         sortField = "published_at";
         Page<Posts> page = postService.findPaginated(pageNo,pageSize, search, sortField, sortDir);
         List<Posts> listPost = page.getContent();
-
         List<Tags> tagsList = tagService.getAllTag();
         model.addAttribute("currentPage",pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
