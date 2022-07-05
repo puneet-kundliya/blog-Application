@@ -11,7 +11,7 @@ public class Posts {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     @Column(name = "title")
     private String title;
     @Column(name = "excerpt")
