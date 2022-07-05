@@ -19,7 +19,7 @@ h1{
     height: 10rem;
 }
 input,select{
-    width: 10rem;
+    width: 9rem;
     height: 2rem;
     font-size: 1rem;
 }
@@ -31,9 +31,10 @@ input,select{
     flex-wrap: wrap;
     width: 90%;
     margin: auto;
+    height : auto;
 }
 .content{
-    height: auto;
+    height: 12rem;
     width: 47%;
     margin: 1rem 1.3rem;
     border: 2px solid black;
@@ -58,8 +59,8 @@ header{
     font-size : 1rem;
 }
 button{
-    margin-right : 3rem;
-    width: 6rem;
+    margin-right : rem;
+    width: 7rem;
     height: 2rem;
     font-size: 1rem;
 }
@@ -78,25 +79,8 @@ button{
     padding-right: 1rem;
 
 }
-.next{
+.user{
+    font-size: 1.25rem;
     text-align: center;
-    font-size: 1.4rem;
-    border: 2px solid black;
-    border-radius: 2px;
-    padding-top: 0.1rem;
-    padding-left: 2.3rem;
-    padding-right: 2.3rem;
-    padding-bottom: 0.1rem;
-    background-color : rgb(211, 208, 208);
-}
-.previous{
-    text-align: center;
-    font-size: 1.4rem;
-    border: 2px solid black;
-    border-radius: 2px;
-    padding-top: 0.1rem;
-    padding-left: 2.3rem;
-    padding-right: 2.3rem;
-    padding-bottom: 0.1rem;
-    background-color : rgb(211, 208, 208);
+    margin: 1rem ;
 }

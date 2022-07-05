@@ -3,13 +3,18 @@ package com.blogpost.project.controller;
 import com.blogpost.project.model.Comments;
 import com.blogpost.project.model.Posts;
 import com.blogpost.project.model.Tags;
+import com.blogpost.project.service.CustomUserDetailService;
+import com.blogpost.project.service.MyUserPrincipal;
 import com.blogpost.project.service.PostService;
 import com.blogpost.project.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +25,9 @@ public class PostController {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private CustomUserDetailService myUserDetailService;
+
     @GetMapping("/newpost")
     public String showPage(Model model) {
         Posts posts = new Posts();
@@ -29,20 +37,23 @@ public class PostController {
         return "newpost";
     }
     @PostMapping("/savePost")
-    public String savePost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag){
+    public String savePost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag,
+                           @AuthenticationPrincipal MyUserPrincipal userPrincipal){
         post.setPublished(true);
-        postService.savePost(post,tag);
+        postService.savePost(post,tag, userPrincipal);
         return "redirect:/";
     }
     @PostMapping("/updatePost{id}")
-    public String updatePost(@PathVariable("id")Integer postId,@ModelAttribute("posts")Posts posts,@ModelAttribute("tag")Tags tag){
+    public String updatePost(@PathVariable("id")Integer postId,@ModelAttribute("posts")Posts posts,
+                             @ModelAttribute("tag")Tags tag){
         postService.updatePost(posts, tag);
         return "redirect:/";
     }
     @PostMapping("/draftPost")
-    public String draftPost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag){
+    public String draftPost(@ModelAttribute("posts") Posts post, @ModelAttribute("tags") Tags tag,
+                            @AuthenticationPrincipal MyUserPrincipal userPrincipal){
         post.setPublished(false);
-        postService.savePost(post,tag);
+        postService.savePost(post,tag, userPrincipal);
         return "redirect:/";
     }
     @GetMapping("/")
@@ -50,13 +61,17 @@ public class PostController {
         return findPaginated(1,"", "ASC",model ,"");
     }
     @GetMapping("/post{id}")
-    public String viewPost(@PathVariable("id") int postId, Model model, @ModelAttribute("comment") Comments comments) {
+    public String viewPost(@PathVariable("id") int postId, Model model,
+                           @ModelAttribute("comment") Comments comments,
+                           @AuthenticationPrincipal MyUserPrincipal userPrincipal) {
         Optional<Posts> post = postService.getPostById(postId);
         Posts postById = post.get();
         List<Comments> commentsList = postById.getComments();
+        if(userPrincipal != null){
+            model.addAttribute("principalUser", userPrincipal.getUsername());
+        }
         model.addAttribute("post", postById);
         model.addAttribute("commentsList", commentsList);
-
         return "viewblog";
     }
     @GetMapping("/post/edit/{id}")
@@ -71,29 +86,34 @@ public class PostController {
         model.addAttribute("tag",tag);
         return "editPost";
     }
-    @GetMapping("/searchKeyword")
+    @GetMapping("/search")
     public String getByKeyword(@RequestParam("search") String search,
                                @RequestParam("sortDir") String sortDir, Model model){
         String sortField = "";
         return findPaginated(1,sortField,sortDir, model, search.toLowerCase());
     }
 
-    @GetMapping("/filterMethod")
-    public String filterByTags(@RequestParam("search") String search,
-                               @RequestParam("sortDir") String sortDir,Model model,
-                               @RequestParam("tagId") List<Integer> tagId){
+    @GetMapping("/filter")
+    public String filterByTags(@RequestParam(value = "search",required = false) String search,
+                               @RequestParam(value = "sortDir",required = false) String sortDir,Model model,
+                               @RequestParam(value = "tagId",required = false) List<Integer> tagId){
 //        @RequestParam("sortField") String sortField,
+        if(tagId==null){
+            tagId = new ArrayList<>();
+
+
+        }
         String sortField = "published_at";
-        System.out.println(tagId);
         return  findPaginatedByTags(1,sortField,sortDir,model,tagId,search);
     }
 
     @GetMapping("/page/{pageNo}/filter")
     public String findPaginatedByTags(@PathVariable("pageNo") Integer pageNo,
                                       String sortField,
-                                      @RequestParam("sortDir") String sortDir,
-                                      Model model,@RequestParam("tagId") List<Integer> IdTags, @RequestParam(value = "search",defaultValue = "") String search){
-        Integer pageSize = 4;
+                                      @RequestParam(value = "sortDir",required = false) String sortDir,
+                                      Model model, @RequestParam(value = "tagId",required = false) List<Integer> IdTags,
+                                      @RequestParam(value = "search",defaultValue = "",required = false) String search){
+        Integer pageSize = 10;
         sortField = "published_at";
         Page<Posts> page = postService.findPaginatedTags(pageNo,pageSize, IdTags, sortField, sortDir);
         List<Posts> listPost = page.getContent();
@@ -101,12 +121,12 @@ public class PostController {
         for (Integer i: IdTags) {
             reqParam += ("&tagId=" + i);
         }
+
         List<Tags> tagsList = tagService.getAllTag();
         model.addAttribute("currentPage",pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("postList", listPost);
-//        model.addAttribute("search", search);
         model.addAttribute("reqParam", reqParam);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
@@ -120,7 +140,7 @@ public class PostController {
                                 @RequestParam("sortField") String sortField,
                                  @RequestParam("sortDir") String sortDir,
                                  Model model,String search){
-        Integer pageSize = 4;
+        Integer pageSize = 10;
         sortField = "published_at";
         Page<Posts> page = postService.findPaginated(pageNo,pageSize, search, sortField, sortDir);
         List<Posts> listPost = page.getContent();

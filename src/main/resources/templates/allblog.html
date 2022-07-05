@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
+<html xmlns:th="https://www.thymeleaf.org" lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,15 +9,15 @@
 </head>
 <body>
 <div id="header">
-    <h1> My Blog Application</h1>
+    <h1><a th:href="@{/}"> My Blog Application </a></h1>
     <div id = "feature">
-        <form th:action="@{/searchKeyword}"  method = "get">
+        <form th:action="@{/search}"  method = "get">
             <input type="text" name="search" th:value="${search}" placeholder = "Search" />
             <input type="hidden" name="sortField" th:value="${sortField}">
             <input type="hidden" name="sortDir" th:value="${sortDir}">
             <button type="submit" >Search</button>
         </form>
-        <form method="get" th:action="@{/searchKeyword}">
+        <form method="get" th:action="@{/search}">
             <input type="hidden" name="sortField" th:value="${sortField}">
             <input type="hidden" name="search" th:value="${search}">
             <select name="sortDir" >
@@ -25,12 +25,19 @@
                 <option  value="ASC">ASC</option>
                 <option  value="DESC">DESC</option>
             </select>
-            <button type="submit">Submit</button>
+            <button type="submit">Sort</button>
         </form>
-        <input type="submit" id="Login" value="Login">
-        <form method="get" th:action="@{/filterMethod}">
+        <a th:href="@{/newpost}"><button type="submit">Create(Post)</button></a>
+
+
+        <a th:href="@{/loginPage}"  sec:authorize="isAnonymous()"><button type="submit">Login</button></a>
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+            <input type="submit" id="Logout" value="Logout">
+        </form>
+
+        <form method="get" th:action="@{/filter}">
             <select name="tagId" multiple class="filter">
-                <option th:each="tag: ${tagList}" th:text="${tag.name}" th:value="${tag.id}"></option>
+                <option th:each="tag: ${tagList}" th:text="${tag.name}" th:value="${tag.id}" ></option>
             </select><br>
             <input type="hidden" name="sortField" th:value="${sortField}">
             <input type="hidden" name="search" th:value="${search}">
@@ -39,12 +46,18 @@
         </form>
     </div>
 </div>
+<h3 class="user" sec:authorize="isAuthenticated()"> Logged User : <span sec:authentication= "name"></span></h3>
+
 <div id = "body">
     <div class = "content" th:each="posts: ${postList}" th:if="${posts.getPublished == true}">
         <a th:href="@{/post{id}(id = ${posts.id})}" class="anchor" >
             <div class = "spacer">
-                <header><strong th:text="${posts.title}"></strong></header>
+                <div style="display: flex; justify-content: space-between;">
+                    <header><strong th:text="${posts.title}"></strong></header>
+                   <span>By : <b th:text="${posts.author}"></b></span>
+                </div>
                 <p th:text="${posts.createdAt}" class="ptag"> </p>
+                <p> <span th:each="tag : ${posts.Tags}"  th:text="'#'+ ${tag.name}+ ' '"></span></p>
                 <p th:text="${posts.excerpt}"></p>
             </div>
         </a>
@@ -62,13 +75,13 @@
         <div class="last">
             <div class="previous">
 <!--                +'&sortField=' + ${sortField}-->
-                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1} + '?search=' + ${search} +'&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Previous</a>
-                <span th:unless="${currentPage > 1}">Previous</span>
+                <a th:if="${currentPage > 1}" th:href="@{'/page/'+${currentPage - 1} + '?search=' + ${search} +'&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}"><button>Previous</button></a>
+                <button th:unless="${currentPage > 1}">Previous</button>
             </div>
             <div class="next">
 <!--                +'&sortField=' + ${sortField}-->
-                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1} + '?search=' + ${search} +'&sortField=' + ${sortField}+ '&sortDir=' + ${sortDir}}">Next</a>
-                <span th:unless="${currentPage < totalPages}">Next</span>
+                <a th:if="${currentPage < totalPages}" th:href="@{'/page/'+${currentPage + 1} + '?search=' + ${search} +'&sortField=' + ${sortField}+ '&sortDir=' + ${sortDir}}"><button>Next</button></a>
+                <button th:unless="${currentPage < totalPages}">Next</button>
             </div>
         </div>
     </div>

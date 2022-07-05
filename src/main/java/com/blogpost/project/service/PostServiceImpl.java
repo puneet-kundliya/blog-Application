@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,15 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public void savePost(Posts posts,Tags tag) {
-        posts.setAuthor("Puneet");
+    public void savePost(Posts posts, Tags tag, MyUserPrincipal userPrincipal) {
+
+        posts.setAuthor(userPrincipal.getUsername());
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        if(posts.getContent().length() <=100){
+        if(posts.getContent().length() <=200){
             posts.setExcerpt(posts.getContent() + "....");
         }
         else{
-            posts.setExcerpt(posts.getContent().substring(0,100)+ "....");
+            posts.setExcerpt(posts.getContent().substring(0,200)+ "....");
         }
         posts.setCreatedAt(timestamp);
         posts.setPublishedAt(timestamp);
@@ -68,8 +70,9 @@ public class PostServiceImpl implements PostService {
         posts.getComments().addAll(oldComments);
         posts.setCreatedAt(postToUpdate.getCreatedAt());
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        posts.setPublishedAt(timestamp);
-        posts.setAuthor("Puneet");
+        posts.setPublishedAt(postToUpdate.getPublishedAt());
+        posts.setUpdatedAt(timestamp);
+        posts.setAuthor(postToUpdate.getAuthor());
         if(posts.getContent().length() <=100){
             posts.setExcerpt(posts.getContent() + "....");
         }

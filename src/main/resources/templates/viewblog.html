@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,22 +12,38 @@
 <div class="top">
     <div class="header">
         <h3>My Blog Application</h3>
-        <input type="submit" id="Login" value="Login">
-    </div>
-    <h1 th:text="${post.title}"></h1>
-    <p th:text="${post.createdAt}"></p>
-    <p th:text="${post.content}"></p>
 
+        <h4 class="user" sec:authorize="isAuthenticated()"> Logged User : <span sec:authentication= "name"></span></h4>
+
+        <form th:action="@{/loginPage}" method="get"  sec:authorize="isAnonymous()">
+            <input type="submit" id="Login" value="Login">
+        </form>
+
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+            <input type="submit" id="Logout" value="Logout">
+        </form>
+    </div>
+    <h2 th:text="${post.title}"></h2>
+    <div>
+        <span th:text="${post.createdAt}"></span><br>
+        Tags : <span th:each="tag : ${post.Tags}"  th:text="'#'+ ${tag.name}+ ' '"  ></span><br>
+        <span>By : <span th:text="${post.author}"></span></span>
+    </div>
+    <p th:text="${post.content}"></p>
+<!--    -->
+    <div th:if="${#authorization.expression('hasRole(''ADMIN'')') or post.author == principalUser}">
     <a th:href="@{/post/edit/{id}(id=${post.id})}"><button type="submit"> Edit</button></a>
     <a th:href="@{/post/delete/{postId}(postId=${post.id})}"><button type="submit"> Delete</button></a>
+<!--        th:if="${post.author == principalUser}-->
+    </div>
 </div>
 <div class="comment">
 
     <div class="insidecomment">
         <h3>Add a Comment</h3>
-        <form  th:action="@{/saveComment{id}(id=${post.id})}" th:object="${comment}" method="POST">
-            <input type="text"  placeholder="Name"  required name="name" th:field="${comment.name}"><br>
-            <input type="email"  placeholder="email" required name="email" th:field="${comment.email}"><br>
+        <form  th:action="@{/saveComment{id}(id=${post.id})}" th:object="${comment}" method="POST" >
+            <input type="text"  placeholder="Name"  required name="name" th:field="${comment.name}" sec:authorize="!isAuthenticated()"><br>
+            <input type="email"  placeholder="email" required name="email" th:field="${comment.email}" sec:authorize="!isAuthenticated()"><br>
             <textarea name="comment" id="" cols="5" rows="5" placeholder="Write your Comment" required th:field="*{comment}"></textarea>
             <button type="submit" class="button"> Submit </button>
         </form>
@@ -37,9 +53,10 @@
         <div  th:each="comment : ${commentsList}">
             <form method="get" class="divtag" >
                 <p class="pcomment" th:text="${comment.comment}"></p>
-
-                <button type="submit" th:formaction="@{'/post'+${post.id}+'/viewEditComment'+${comment.id}}">Edit</button>
-                <button type="submit" th:formaction="@{'/post'+${post.id}+'/deleteComment'+${comment.id}}">Delete</button>
+                <button type="submit" th:formaction="@{'/post'+${post.id}+'/viewEditComment'+${comment.id}}"
+                        th:if="${#authorization.expression('hasRole(''ADMIN'')') or post.author == principalUser}">Edit</button>
+                <button type="submit" th:formaction="@{'/post'+${post.id}+'/deleteComment'+${comment.id}}"
+                        th:if="${#authorization.expression('hasRole(''ADMIN'')') or post.author == principalUser}">Delete</button>
             </form>
         </div>
     </div>

@@ -3,11 +3,17 @@ package com.blogpost.project.controller;
 import com.blogpost.project.model.Comments;
 import com.blogpost.project.model.Posts;
 import com.blogpost.project.service.CommentService;
+import com.blogpost.project.service.MyUserPrincipal;
 import com.blogpost.project.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
 import java.util.Optional;
 
 @Controller
@@ -19,7 +25,12 @@ public class CommentController {
     CommentService commentService;
 
     @PostMapping("/saveComment{id}")
-    public String saveComments(@PathVariable("id") Integer id, Comments comments){
+    public String saveComments(@PathVariable("id") Integer id, Comments comments, @AuthenticationPrincipal MyUserPrincipal userPrincipal){
+
+        if(userPrincipal != null){
+            comments.setName(userPrincipal.getUsername());
+            comments.setEmail(userPrincipal.getEmail());
+        }
         Optional<Posts> postById = postService.getPostById(id);
         Posts posts = postById.get();
         comments.setPostId(id);

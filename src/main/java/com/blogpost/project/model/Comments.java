@@ -85,4 +85,5 @@ public class Comments {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }

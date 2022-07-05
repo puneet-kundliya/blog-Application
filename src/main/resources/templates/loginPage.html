@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="https://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+      <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+<div class="container">
+    <form th:action="@{/processLogin}" method="post">
+        <h2>Login</h2>
+
+        <div class="error" th:if="${param.error}">Incorrect Credentials</div>
+
+        <b>Username</b>
+        <input type="text" placeholder="Enter Username" name="username" required>
+
+        <b>Password</b>
+        <input type="password" placeholder="Enter Password" name="password" required>
+      
+        <button type="submit" >Login</button>
+    </form>
+
+        <a th:href="@{/registerPage}"><button>Sign Up</button></a>
+
+</div>
+</body>
+</html>
