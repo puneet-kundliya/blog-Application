@@ -100,8 +100,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void savePostComments(Posts posts) {
+
         postRepository.save(posts);
     }
+
     public Optional<Posts> getPostById(Integer postId){
        Optional<Posts> post=  postRepository.findById(postId);
        if(post.isPresent()){

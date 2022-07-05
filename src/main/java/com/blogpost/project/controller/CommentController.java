@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -40,13 +41,28 @@ public class CommentController {
         return "redirect:/post{id}";
     }
     @GetMapping("/post{postId}/deleteComment{commentId}")
-    public String deleteComments(@PathVariable("postId") Integer postId, @PathVariable("commentId")Integer commentId){
+    public String deleteComments(@PathVariable("postId") Integer postId, @PathVariable("commentId")Integer commentId,
+                                 @AuthenticationPrincipal MyUserPrincipal userPrincipal){
+
+        Optional<Posts> postsOptional = postService.getPostById(postId);
+        Posts postById = postsOptional.get();
+        if(!postById.getAuthor().equals(userPrincipal.getUsername()) && !userPrincipal.getUsername().equals("Admin")){
+            throw new RuntimeException("You are not authorized to do this operation");
+        }
+
         Comments comments = commentService.getCommentById(commentId);
         commentService.deleteComment(comments);
         return "redirect:/post{postId}";
     }
     @GetMapping("/post{postId}/viewEditComment{commentId}")
-    public String viewEditComment(@PathVariable("postId") Integer postId, @PathVariable("commentId") Integer commentId, Model model){
+    public String viewEditComment(@PathVariable("postId") Integer postId, @PathVariable("commentId") Integer commentId, Model model, Principal principal){
+        Optional<Posts> postsOptional = postService.getPostById(postId);
+        Posts postById = postsOptional.get();
+        System.out.println(principal.getName());
+        if(!postById.getAuthor().equals(principal.getName()) && !principal.getName().equals("Admin")){
+            throw new RuntimeException("You are not authorized to view this page");
+        }
+
         Comments comments = commentService.getCommentById(commentId);
         model.addAttribute("comments", comments);
         return "editComment";

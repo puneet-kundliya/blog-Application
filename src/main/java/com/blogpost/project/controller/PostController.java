@@ -13,7 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +75,12 @@ public class PostController {
         return "viewblog";
     }
     @GetMapping("/post/edit/{id}")
-    public String editPost(@PathVariable("id") int postId, Model model) {
+    public String editPost(@PathVariable("id") int postId, Model model,@AuthenticationPrincipal MyUserPrincipal userPrincipal) {
         Optional<Posts> postsOptional = postService.getPostById(postId);
         Posts postById = postsOptional.get();
+        if(!postById.getAuthor().equals(userPrincipal.getUsername()) && !userPrincipal.getUsername().equals("Admin")){
+            throw new RuntimeException("You are not authorized to visit this page");
+        }
         Tags tag = new Tags();
         List<Tags> tagsList = postById.getTags();
         String allTags = tagService.getAllTagName(tagsList);
@@ -96,22 +99,24 @@ public class PostController {
     @GetMapping("/filter")
     public String filterByTags(@RequestParam(value = "search",required = false) String search,
                                @RequestParam(value = "sortDir",required = false) String sortDir,Model model,
-                               @RequestParam(value = "tagId",required = false) List<Integer> tagId){
+                               @RequestParam(value = "tagId",required = false,defaultValue = "") List<Integer> IdTags){
 //        @RequestParam("sortField") String sortField,
-        if(tagId==null){
-            tagId = new ArrayList<>();
-
-
-        }
         String sortField = "published_at";
-        return  findPaginatedByTags(1,sortField,sortDir,model,tagId,search);
+        List<Tags> tagsList = tagService.getAllTag();
+        if(IdTags.isEmpty()){
+            IdTags = new ArrayList<>();
+            for (Tags tag : tagsList ) {
+                IdTags.add(tag.getId());
+            }
+        }
+        return  findPaginatedByTags(1,sortField,sortDir,model,IdTags,search);
     }
 
     @GetMapping("/page/{pageNo}/filter")
     public String findPaginatedByTags(@PathVariable("pageNo") Integer pageNo,
                                       String sortField,
                                       @RequestParam(value = "sortDir",required = false) String sortDir,
-                                      Model model, @RequestParam(value = "tagId",required = false) List<Integer> IdTags,
+                                      Model model, @RequestParam(value = "tagId",required = false, defaultValue = "") List<Integer> IdTags,
                                       @RequestParam(value = "search",defaultValue = "",required = false) String search){
         Integer pageSize = 10;
         sortField = "published_at";
@@ -121,8 +126,13 @@ public class PostController {
         for (Integer i: IdTags) {
             reqParam += ("&tagId=" + i);
         }
-
         List<Tags> tagsList = tagService.getAllTag();
+        if(IdTags.isEmpty()){
+            IdTags = new ArrayList<>();
+            for (Tags tag : tagsList ) {
+                IdTags.add(tag.getId());
+            }
+        }
         model.addAttribute("currentPage",pageNo);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
@@ -137,8 +147,8 @@ public class PostController {
 
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable("pageNo") Integer pageNo,
-                                @RequestParam("sortField") String sortField,
-                                 @RequestParam("sortDir") String sortDir,
+                                @RequestParam(name = "sortField",required = false) String sortField,
+                                 @RequestParam(name = "sortDir",required = false) String sortDir,
                                  Model model,String search){
         Integer pageSize = 10;
         sortField = "published_at";
@@ -157,7 +167,12 @@ public class PostController {
     }
 
     @GetMapping("post/delete/{postId}")
-    public String deletePost(@PathVariable("postId") Integer postId){
+    public String deletePost(@PathVariable("postId") Integer postId, Principal principal){
+        Optional<Posts> postsOptional = postService.getPostById(postId);
+        Posts postById = postsOptional.get();
+        if(!postById.getAuthor().equals(principal.getName()) && !principal.getName().equals("Admin")){
+            throw new RuntimeException("You are not authorized to do this operation");
+        }
         postService.deletePost(postId);
         return "redirect:/";
     }
