@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.security.Principal;
 import java.util.Optional;
 
@@ -47,9 +46,8 @@ public class CommentController {
         Optional<Posts> postsOptional = postService.getPostById(postId);
         Posts postById = postsOptional.get();
         if(!postById.getAuthor().equals(userPrincipal.getUsername()) && !userPrincipal.getUsername().equals("Admin")){
-            throw new RuntimeException("You are not authorized to do this operation");
+            throw new RuntimeException();
         }
-
         Comments comments = commentService.getCommentById(commentId);
         commentService.deleteComment(comments);
         return "redirect:/post{postId}";
@@ -58,11 +56,9 @@ public class CommentController {
     public String viewEditComment(@PathVariable("postId") Integer postId, @PathVariable("commentId") Integer commentId, Model model, Principal principal){
         Optional<Posts> postsOptional = postService.getPostById(postId);
         Posts postById = postsOptional.get();
-        System.out.println(principal.getName());
         if(!postById.getAuthor().equals(principal.getName()) && !principal.getName().equals("Admin")){
-            throw new RuntimeException("You are not authorized to view this page");
+            throw new RuntimeException();
         }
-
         Comments comments = commentService.getCommentById(commentId);
         model.addAttribute("comments", comments);
         return "editComment";
@@ -70,8 +66,6 @@ public class CommentController {
     @PostMapping("/post{postId}/editComment{commentId}")
     public String editComment(@PathVariable("commentId")Integer commentId,@ModelAttribute("comments") Comments comments){
         Comments oldComments = commentService.getCommentById(commentId);
-        System.out.println(oldComments.toString());
-        System.out.println(comments.getComment());
         commentService.updateComments(comments,oldComments);
         return "redirect:/post{postId}";
     }

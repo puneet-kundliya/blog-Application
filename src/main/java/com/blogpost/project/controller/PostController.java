@@ -79,7 +79,7 @@ public class PostController {
         Optional<Posts> postsOptional = postService.getPostById(postId);
         Posts postById = postsOptional.get();
         if(!postById.getAuthor().equals(userPrincipal.getUsername()) && !userPrincipal.getUsername().equals("Admin")){
-            throw new RuntimeException("You are not authorized to visit this page");
+            throw new RuntimeException();
         }
         Tags tag = new Tags();
         List<Tags> tagsList = postById.getTags();
@@ -171,7 +171,7 @@ public class PostController {
         Optional<Posts> postsOptional = postService.getPostById(postId);
         Posts postById = postsOptional.get();
         if(!postById.getAuthor().equals(principal.getName()) && !principal.getName().equals("Admin")){
-            throw new RuntimeException("You are not authorized to do this operation");
+            throw new RuntimeException();
         }
         postService.deletePost(postId);
         return "redirect:/";

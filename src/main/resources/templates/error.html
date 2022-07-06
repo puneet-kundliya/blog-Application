@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" th:href="@{/css/accessDenied.css}">
+</head>
+<body>
+
+<div>
+    <h2>Access Denied</h2>
+
+    <p>You Dont Have Permission</p>
+
+    <p sec:authorize="isAuthenticated()">Try Login from Different <a th:href="@{/loginPage}" > Account</a></p>
+
+    <p sec:authorize="isAnonymous()">Try Login <a th:href="@{/loginPage}" > Account</a></p>
+
+    <p>Go to <a th:href="@{/}">Home</a></p>
+</div>
+
+
+</body>
+</html>
