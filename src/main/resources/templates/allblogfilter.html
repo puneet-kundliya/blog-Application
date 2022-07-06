@@ -58,7 +58,6 @@
                 </div>
                 <p th:text="${posts.createdAt}" class="ptag"> </p>
                 <p> <span th:each="tag : ${posts.Tags}"  th:text="'#'+ ${tag.name}+ ' '"></span></p>
-                <span>By : <span th:text="${posts.author}"></span></span>
                 <p th:text="${posts.excerpt}"></p>
             </div>
         </a>
