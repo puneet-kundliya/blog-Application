@@ -39,4 +39,33 @@ public class ApplicationSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    //    @Autowired
+//    CustomUserDetailService customUserDetailService;
+//
+//    @Autowired
+//    UserDetailsService userDetailsService;
+
+
+//
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//
+//        http
+//                .authorizeRequests()
+//                .antMatchers("/newpost","post/delete/{postId}","/post/edit/{id}").hasAnyRole("ADMIN","AUTHOR")
+//                .antMatchers("/**").permitAll()
+//                .anyRequest().authenticated()
+//                .and()
+//                .exceptionHandling().accessDeniedPage("/error")
+//                .and()
+//                .formLogin().loginPage("/loginPage")
+//                .loginProcessingUrl("/processLogin")
+//                .and()
+//                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/");
+//    }
+//
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(customUserDetailService).passwordEncoder(passwordEncoder());
+//    }
 }
