@@ -11,7 +11,7 @@ public class Tags {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     @Column(name = "name")
     private String name;
     @Column(name = "created_at")
