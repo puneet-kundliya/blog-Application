@@ -25,8 +25,13 @@ public class UserController {
         String password = user.getPassword();
         user.setPassword(passwordEncoder.encode(password));
         user.setRoles("ROLE_AUTHOR");
-        customUserDetailService.saveUserDetail(user);
-        return "redirect:/loginPage";
+        Boolean saveUserPresent = customUserDetailService.saveUserDetail(user);
+        if(saveUserPresent){
+            return "redirect:/loginPage";
+        }
+        else {
+            return "redirect:/registerPage?error";
+        }
     }
 
     @GetMapping("/registerPage")

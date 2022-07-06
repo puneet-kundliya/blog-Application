@@ -28,7 +28,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/newpost","post/delete/{postId}","/post/edit/{id}").authenticated()
+                .antMatchers("/newpost","post/delete/{postId}","/post/edit/{id}").hasAnyRole("ADMIN","AUTHOR")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

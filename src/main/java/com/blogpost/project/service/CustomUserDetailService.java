@@ -2,11 +2,15 @@ package com.blogpost.project.service;
 
 import com.blogpost.project.model.Users;
 import com.blogpost.project.repository.UserRepository;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CustomUserDetailService implements UserDetailsService {
@@ -16,14 +20,18 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Users user = userRepository.findUserByName(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User " + username + " not found");
-        }
-        return new MyUserPrincipal(user);
+        Optional<Users> user = userRepository.findUserByName(username);
+        return new MyUserPrincipal(user.get());
     }
 
-    public void saveUserDetail(Users users){
-        userRepository.save(users);
+    public Boolean saveUserDetail(Users users){
+        try{
+            userRepository.save(users);
+            return true;
+        }
+        catch (ConstraintViolationException | DataIntegrityViolationException exception){
+            return false;
+        }
     }
+
 }
