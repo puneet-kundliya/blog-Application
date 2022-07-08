@@ -1,7 +1,6 @@
 package com.blogpost.project.service;
 
 import com.blogpost.project.model.Tags;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -11,4 +10,6 @@ public interface TagService {
      List<Tags> getAllTag();
 
     String getAllTagName(List<Tags> tagsList);
+
+    void save(Tags newTag);
 }

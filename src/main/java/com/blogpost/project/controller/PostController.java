@@ -4,7 +4,7 @@ import com.blogpost.project.model.Comments;
 import com.blogpost.project.model.Posts;
 import com.blogpost.project.model.Tags;
 import com.blogpost.project.service.CustomUserDetailService;
-import com.blogpost.project.service.MyUserPrincipal;
+import com.blogpost.project.Serviceimplementation.MyUserPrincipal;
 import com.blogpost.project.service.PostService;
 import com.blogpost.project.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class PostController {
     @PostMapping("/updatePost{id}")
     public String updatePost(@PathVariable("id")Integer postId,@ModelAttribute("posts")Posts posts,
                              @ModelAttribute("tag")Tags tag){
-        postService.updatePost(posts, tag);
+        postService.updatePost(posts, tag,postId);
         return "redirect:/";
     }
     @PostMapping("/draftPost")
@@ -100,7 +100,6 @@ public class PostController {
     public String filterByTags(@RequestParam(value = "search",required = false) String search,
                                @RequestParam(value = "sortDir",required = false) String sortDir,Model model,
                                @RequestParam(value = "tagId",required = false,defaultValue = "") List<Integer> IdTags){
-//        @RequestParam("sortField") String sortField,
         String sortField = "published_at";
         List<Tags> tagsList = tagService.getAllTag();
         if(IdTags.isEmpty()){

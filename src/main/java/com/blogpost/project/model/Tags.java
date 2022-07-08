@@ -1,5 +1,6 @@
 package com.blogpost.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class Tags {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "post_tags",
             joinColumns = @JoinColumn(name = "tag_id"),

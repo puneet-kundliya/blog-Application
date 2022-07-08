@@ -1,19 +1,20 @@
-package com.blogpost.project.service;
+package com.blogpost.project.Serviceimplementation;
 
-import com.blogpost.project.model.Comments;
 import com.blogpost.project.model.Posts;
 import com.blogpost.project.model.Tags;
 import com.blogpost.project.repository.PostRepository;
 import com.blogpost.project.repository.TagRepository;
+import com.blogpost.project.service.PostService;
+import com.blogpost.project.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +32,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void savePost(Posts posts, Tags tag, MyUserPrincipal userPrincipal) {
-
         posts.setAuthor(userPrincipal.getUsername());
+        posts.setPublished(true);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if(posts.getContent().length() <=200){
             posts.setExcerpt(posts.getContent() + "....");
@@ -42,10 +43,16 @@ public class PostServiceImpl implements PostService {
         }
         posts.setCreatedAt(timestamp);
         posts.setPublishedAt(timestamp);
-        String tagName = tag.getName();
-        String[] array = tagName.split(",");
+        List<String> array = new ArrayList<>();
+        if(tag == null){
+            array = Arrays.asList(posts.getTagString().split(","));
+        }
+        else{
+            System.out.println("hello");
+            String tagName = tag.getName();
+            array = Arrays.asList(tagName.split(","));
+        }
         for (String name : array){
-            tag.getPosts().add(posts);
             Tags tagsDb = tagRepository.getTagByName(name);
             if(tagsDb == null){
                 Tags newTag = new Tags();
@@ -62,56 +69,60 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(Posts posts, Tags tag) {
-        posts.setPublished(true);
-        Optional<Posts> postById = getPostById(posts.getId());
-        Posts postToUpdate = postById.get();
-        List<Comments> oldComments = postToUpdate.getComments();
-        posts.getComments().addAll(oldComments);
-        posts.setCreatedAt(postToUpdate.getCreatedAt());
+    public void updatePost(Posts posts, Tags tag, Integer postId) {
+        Optional<Posts> postById = getPostById(postId);
+        Posts postToUpdate;
+        if(postById.isPresent()){
+            postToUpdate = postById.get();
+        }
+        else {
+            throw new RuntimeException();
+        }
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        posts.setPublishedAt(postToUpdate.getPublishedAt());
-        posts.setUpdatedAt(timestamp);
-        posts.setAuthor(postToUpdate.getAuthor());
+        postToUpdate.setUpdatedAt(timestamp);
+        postToUpdate.setTitle(posts.getTitle());
         if(posts.getContent().length() <=100){
-            posts.setExcerpt(posts.getContent() + "....");
+            postToUpdate.setExcerpt(posts.getContent() + "....");
         }
         else{
-            posts.setExcerpt(posts.getContent().substring(0,100)+ "....");
+            postToUpdate.setExcerpt(posts.getContent().substring(0,100)+ "....");
         }
-        String tagName = tag.getName();
-        String[] array = tagName.split(",");
-        for (String name : array){
-            tag.getPosts().add(posts);
-            Tags tagsDb = tagRepository.getTagByName(name);
-            if(tagsDb == null){
+        String[] array;
+        if(tag == null){
+            array = posts.getTagString().split(",");
+        }
+        else{
+            String tagName = tag.getName();
+            array = tagName.split(",");
+        }
+        for (String tagName : array) {
+            Tags tagsDb = tagRepository.getTagByName(tagName);
+            if (tagsDb == null) {
                 Tags newTag = new Tags();
-                newTag.setName(name);
+                newTag.setName(tagName);
                 newTag.setCreatedAt(timestamp);
+                tagService.save(newTag);
                 posts.getTags().add(newTag);
-                tagRepository.save(newTag);
-            }
-            else{
+            }else {
                 posts.getTags().add(tagsDb);
             }
         }
-        postRepository.save(posts);
+        postToUpdate.setTags(posts.getTags());
+        postRepository.save(postToUpdate);
     }
 
     @Override
     public void savePostComments(Posts posts) {
-
         postRepository.save(posts);
     }
 
     public Optional<Posts> getPostById(Integer postId){
        Optional<Posts> post=  postRepository.findById(postId);
-       if(post.isPresent()){
-           return post;
-       }
-       else{
-           throw new RuntimeException("Post is not present");
-       }
+        if (post.isPresent()) {
+            return post;
+        } else {
+            throw new NullPointerException("Did not find post " + postId);
+        }
     }
 
     @Override

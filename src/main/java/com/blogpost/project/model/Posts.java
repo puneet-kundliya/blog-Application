@@ -29,6 +29,17 @@ public class Posts {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    @Transient
+    private String tagString;
+
+    public String getTagString() {
+        return tagString;
+    }
+
+    public void setTagString(String tagString) {
+        this.tagString = tagString;
+    }
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "post_tags",
             joinColumns = @JoinColumn(name = "post_id"),

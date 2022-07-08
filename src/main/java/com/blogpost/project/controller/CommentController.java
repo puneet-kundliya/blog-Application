@@ -3,7 +3,7 @@ package com.blogpost.project.controller;
 import com.blogpost.project.model.Comments;
 import com.blogpost.project.model.Posts;
 import com.blogpost.project.service.CommentService;
-import com.blogpost.project.service.MyUserPrincipal;
+import com.blogpost.project.Serviceimplementation.MyUserPrincipal;
 import com.blogpost.project.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +34,7 @@ public class CommentController {
         Optional<Posts> postById = postService.getPostById(id);
         Posts posts = postById.get();
         comments.setPostId(id);
-        commentService.saveComment(comments);
+        commentService.saveComment(comments, userPrincipal);
         posts.getComments().add(comments);
         postService.savePostComments(posts);
         return "redirect:/post{id}";

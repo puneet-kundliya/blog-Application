@@ -1,19 +1,19 @@
-package com.blogpost.project.service;
+package com.blogpost.project.Serviceimplementation;
 
 import com.blogpost.project.model.Comments;
 import com.blogpost.project.repository.CommentRepository;
+import com.blogpost.project.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Optional;
 
 @Service
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentRepository commentRepository;
     @Override
-    public void saveComment(Comments comments) {
+    public void saveComment(Comments comments, MyUserPrincipal userPrincipal) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         comments.setCreatedAt(timestamp);
     }
@@ -21,14 +21,15 @@ public class CommentServiceImpl implements CommentService{
     public void deleteComment(Comments comment) {
         commentRepository.delete(comment);
     }
-    public Comments getCommentById(Integer commentId){
-        List<Comments> listComment = commentRepository.findAll();
-        for (Comments comment: listComment) {
-            if(comment.getId() == commentId){
-                return comment;
-            }
+    public Comments getCommentById(Integer commentId) {
+        Optional<Comments> commentById = commentRepository.findCommentById(commentId);
+        Comments oldComment = new Comments();
+        if (commentById.isPresent()) {
+            oldComment = commentById.get();
+            return oldComment;
+        } else {
+            throw new NullPointerException("Comment not Found or Comment Id Invalid");
         }
-        return null;
     }
     public void updateComments(Comments comment, Comments oldComment) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());

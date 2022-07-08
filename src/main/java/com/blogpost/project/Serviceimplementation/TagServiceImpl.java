@@ -1,10 +1,13 @@
-package com.blogpost.project.service;
+package com.blogpost.project.Serviceimplementation;
 
 import com.blogpost.project.model.Tags;
 import com.blogpost.project.repository.TagRepository;
+import com.blogpost.project.service.TagService;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,5 +40,17 @@ public class TagServiceImpl implements TagService {
             allTags += name;
         }
         return allTags;
+    }
+
+    @Override
+    public void save(Tags tags) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        try{
+            tags.setCreatedAt(timestamp);
+            tagRepository.save(tags);
+        }
+        catch (ConstraintViolationException | DataIntegrityViolationException exception){
+            exception.printStackTrace();
+        }
     }
 }
