@@ -1,0 +1,14 @@
+[1mdiff --git a/src/main/java/com/blogpost/project/RestController/RestPostController.java b/src/main/java/com/blogpost/project/RestController/RestPostController.java[m
+[1mindex 66fdfb5..048b741 100644[m
+[1m--- a/src/main/java/com/blogpost/project/RestController/RestPostController.java[m
+[1m+++ b/src/main/java/com/blogpost/project/RestController/RestPostController.java[m
+[36m@@ -102,8 +102,7 @@[m [mpublic class RestPostController {[m
+                 idTags.add(tag.getId());[m
+             }[m
+         }[m
+[31m-[m
+[31m-        Page<Posts> pagePosts = postService.findPaginatedSearchTags(pageNo,pageSize,idTags,sortField,order,search);[m
+[32m+[m[32m        Page<Posts> pagePosts = postService.findPaginatedSearchTags(pageNo,pageSize,idTags,sortField,order,search.toLowerCase());[m
+         List<Posts> listPost = pagePosts.getContent();[m
+         return listPost;[m
+     }[m

@@ -102,8 +102,7 @@ public class RestPostController {
                 idTags.add(tag.getId());
             }
         }
-
-        Page<Posts> pagePosts = postService.findPaginatedSearchTags(pageNo,pageSize,idTags,sortField,order,search);
+        Page<Posts> pagePosts = postService.findPaginatedSearchTags(pageNo,pageSize,idTags,sortField,order,search.toLowerCase());
         List<Posts> listPost = pagePosts.getContent();
         return listPost;
     }
