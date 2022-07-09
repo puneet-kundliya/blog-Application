@@ -23,4 +23,7 @@ public interface PostService {
     Page<Posts> findPaginatedTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDir);
 
     void deletePost(Integer postId);
+
+    Page<Posts> findPaginatedSearchTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDir,String keyword);
+
 }

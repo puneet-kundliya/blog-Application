@@ -17,4 +17,10 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
 
     @Query(value = "select * from posts where id in (select p.id from posts p join post_tags pt on p.id = pt.post_id join tags t on t.id = pt.tag_id where t.id in :selectedTags)", nativeQuery = true)
     Page<Posts> findByTags(@Param("selectedTags") List<Integer> selectedTags, Pageable pageable);
+
+    @Query(value="SELECT * FROM posts WHERE id IN (SELECT p.id FROM posts p JOIN post_tags pt ON p.id = pt.post_id" +
+            " JOIN tags t ON t.id = pt.tag_id WHERE p.is_published = true and" +
+            " ((LOWER(t.name) like %:search% or LOWER(p.title) like %:search% or LOWER(p.content) like %:search% or" +
+            " LOWER(p.author) like %:search%)) and t.id IN :tagIdList)", nativeQuery = true)
+    Page<Posts> findByTagSearch(Pageable pageable,@Param("search") String keyword , @Param("tagIdList") List<Integer> selectedTags);
 }

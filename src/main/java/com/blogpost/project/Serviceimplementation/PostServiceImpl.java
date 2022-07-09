@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -126,34 +127,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Posts> findPaginated(Integer pageNo, Integer pageSize, String keyword,  String sortField, String sortDirection) {
-
-        Sort sort;
-        if(sortDirection.equalsIgnoreCase("ASC")){
-            sort = Sort.by(Sort.Direction.ASC,"published_at");
-        }
-        else{
-            sort = Sort.by(Sort.Direction.DESC, "published_at");
-        }
-        Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
-        return this.postRepository.findBySearch(keyword, pageable);
-    }
-
-    @Override
-    public Page<Posts> findPaginatedTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDirection) {
-
-        Sort sort;
-        if(sortDirection.equalsIgnoreCase("ASC")){
-            sort = Sort.by(Sort.Direction.ASC,"published_at");
-        }
-        else{
-            sort = Sort.by(Sort.Direction.DESC, "published_at");
-        }
-        Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
-        return this.postRepository.findByTags(idTags,pageable);
-    }
-
-    @Override
     public void deletePost(Integer postId) {
         Posts post = getPostById(postId).get();
         postRepository.delete(post);
@@ -172,5 +145,45 @@ public class PostServiceImpl implements PostService {
             }
         }
         return postByTagId;
+    }
+
+    @Override
+    public Page<Posts> findPaginated(Integer pageNo, Integer pageSize, String keyword,  String sortField, String sortDirection) {
+        Sort sort;
+        if(sortDirection.equalsIgnoreCase("ASC")){
+            sort = Sort.by(Sort.Direction.ASC,"published_at");
+        }
+        else{
+            sort = Sort.by(Sort.Direction.DESC, "published_at");
+        }
+        Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
+        return this.postRepository.findBySearch(keyword, pageable);
+    }
+
+    @Override
+    public Page<Posts> findPaginatedTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDirection) {
+        Sort sort;
+        if(sortDirection.equalsIgnoreCase("ASC")){
+            sort = Sort.by(Sort.Direction.ASC,"published_at");
+        }
+        else{
+            sort = Sort.by(Sort.Direction.DESC, "published_at");
+        }
+        Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
+        return this.postRepository.findByTags(idTags,pageable);
+    }
+
+    @Override
+    public Page<Posts> findPaginatedSearchTags(Integer pageNo, Integer pageSize, List<Integer> idTags, String sortField, String sortDir, String keyword) {
+        Sort sort;
+        if(sortDir.equalsIgnoreCase("ASC")){
+            sort = Sort.by(Sort.Direction.ASC,"published_at");
+        }
+        else{
+            sort = Sort.by(Sort.Direction.DESC, "published_at");
+        }
+        Pageable pageable = PageRequest.of(pageNo-1,pageSize, sort);
+
+        return this.postRepository.findByTagSearch(pageable, keyword ,idTags);
     }
 }

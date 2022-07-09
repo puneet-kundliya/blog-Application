@@ -96,33 +96,15 @@ public class RestPostController {
                                      @RequestParam(value = "tagId",required = false, defaultValue = "") List<Integer> idTags){
         Integer pageSize = 10;
         List<Tags> tagsList = tagService.getAllTag();
-        idTags = new ArrayList<>();
-        for (Tags tag : tagsList ) {
-            idTags.add(tag.getId());
-        }
-        Page<Posts> pageTags = postService.findPaginatedTags(pageNo,pageSize, idTags, sortField, order);
-        List<Posts> postTags = pageTags.getContent();
-        Page<Posts> pageSearch = postService.findPaginated(pageNo,pageSize, search, sortField, order);
-        List<Posts> postSearch = pageSearch.getContent();
-        List<Posts>listPost = new ArrayList<>();
-        for (Posts post: pageTags) {
-            if(postSearch.contains(post)){
-                listPost.add(post);
+        if(idTags.isEmpty()){
+            idTags = new ArrayList<>();
+            for (Tags tag : tagsList ) {
+                idTags.add(tag.getId());
             }
         }
+
+        Page<Posts> pagePosts = postService.findPaginatedSearchTags(pageNo,pageSize,idTags,sortField,order,search);
+        List<Posts> listPost = pagePosts.getContent();
         return listPost;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
